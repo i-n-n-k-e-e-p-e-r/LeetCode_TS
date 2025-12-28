@@ -17,15 +17,70 @@ class ListNode {
   }
 }
 
+function arrayToList(input: number[]): ListNode | null {
+  if (!input || input.length === 0) {
+    return null;
+  }
+  return new ListNode(input.pop(), arrayToList(input));
+}
+
 function addTwoNumbers(
   l1: ListNode | null,
   l2: ListNode | null,
 ): ListNode | null {
-  return null;
+  if (!l1 || !l2) return null;
+  let a1: number[] = [];
+  let a2: number[] = [];
+
+  while (l1 || l2) {
+    if (l1) {
+      a1.push(l1.val);
+      l1 = l1.next;
+    }
+    if (l2) {
+      a2.push(l2.val);
+      l2 = l2.next;
+    }
+  }
+
+  const resultArray: number[] = [];
+  let result: ListNode | null = null;
+  let t = 0;
+  if (a2.length > a1.length) {
+    [a1, a2] = [a2, a1];
+  }
+
+  while (a1.length > 0) {
+    const sum = a1.shift()! + (a2.shift() ?? 0) + t;
+    t = sum >= 10 ? 1 : 0;
+    resultArray.push(sum % 10);
+  }
+
+  if (t === 1) {
+    resultArray.push(1);
+  }
+
+  resultArray.reverse().map((e) => {
+    result = new ListNode(e, result);
+  });
+
+  return result;
 }
 
-console.time("addTwoNumbers");
-const l1 = new ListNode(2, new ListNode(4, new ListNode(3)));
-const l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
+console.time("addTwoNumbers1");
+const l1 = arrayToList([3, 4, 2]);
+const l2 = arrayToList([4, 6, 5]);
 console.log(addTwoNumbers(l1, l2));
-console.timeEnd("addTwoNumbers");
+console.timeEnd("addTwoNumbers1");
+
+console.time("addTwoNumbers2");
+const l11 = arrayToList([9, 9, 9, 9, 9, 9, 9]);
+const l22 = arrayToList([9, 9, 9]);
+console.log(addTwoNumbers(l11, l22));
+console.timeEnd("addTwoNumbers2");
+
+console.time("addTwoNumbers3");
+const l111 = arrayToList([9, 4, 2]);
+const l222 = arrayToList([9, 4, 6, 5]);
+console.log(addTwoNumbers(l111, l222));
+console.timeEnd("addTwoNumbers3");
